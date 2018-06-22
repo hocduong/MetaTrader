@@ -6,7 +6,7 @@
 #property copyright "Gogojungle Corp."
 #property link      "https://gogojungle.co.jp/"
 #property version   "1.00"
-
+input int    Interval    =3600;
 
 
 
@@ -16,7 +16,7 @@
 int OnInit()
   {
 //--- create timer
-   EventSetTimer(3600); 
+   EventSetTimer(Interval); 
 //---
    return(INIT_SUCCEEDED);
   }
