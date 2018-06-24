@@ -13,12 +13,12 @@
 #property indicator_type1   DRAW_LINE
 #property indicator_color1  DodgerBlue
 //--- input parameters
-input int InpPeriodRSI=12; // Period
+input int InpPeriodPSY=12; // Period
 //--- indicator buffers
-double    ExtRSIBuffer[];
+double    ExtPSYBuffer[];
 
 //--- global variable
-int       ExtPeriodRSI;
+int       ExtPeriodPSY;
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -26,18 +26,18 @@ void OnInit()
   {
 //--- check for input
 
-   if(InpPeriodRSI<1)
+   if(InpPeriodPSY<1)
      {
-      ExtPeriodRSI=12;
-      Print("Incorrect value for input variable InpPeriodPSY =",InpPeriodRSI,
-            "Indicator will use value =",ExtPeriodRSI,"for calculations.");
+      ExtPeriodPSY=12;
+      Print("Incorrect value for input variable InpPeriodPSY =",InpPeriodPSY,
+            "Indicator will use value =",ExtPeriodPSY,"for calculations.");
      }
-   else ExtPeriodRSI=InpPeriodRSI;
+   else ExtPeriodPSY=InpPeriodPSY;
    
 //--- indicator buffers mapping
-   SetIndexBuffer(0,ExtRSIBuffer,INDICATOR_DATA);
+   SetIndexBuffer(0,ExtPSYBuffer,INDICATOR_DATA);
 //--- name for DataWindow and indicator subwindow label
-   IndicatorSetString(INDICATOR_SHORTNAME,"PSY("+string(ExtPeriodRSI)+")");
+   IndicatorSetString(INDICATOR_SHORTNAME,"PSY("+string(ExtPeriodPSY)+")");
 //--- initialization done
   }
 //+------------------------------------------------------------------+
@@ -53,28 +53,28 @@ int OnCalculate(const int rates_total,
    double SumP=0.0;
    
 //--- check for rates count
-   if(rates_total<=ExtPeriodRSI)
+   if(rates_total<=ExtPeriodPSY)
       return(0);
       
 //--- preliminary calculations
 //--- bars handled on a previous calculate
    int pos=prev_calculated-1;
-   if(pos<=ExtPeriodRSI)
+   if(pos<=ExtPeriodPSY)
      {
       //--- first RSIPeriod values of the indicator are not calculated
-      ExtRSIBuffer[0]=0.0;
+      ExtPSYBuffer[0]=0.0;
       
-      for(i=1;i<=ExtPeriodRSI;i++)
+      for(i=1;i<=ExtPeriodPSY;i++)
         {
-         ExtRSIBuffer[i]=0.0;
+         ExtPSYBuffer[i]=0.0;
          diff=price[i]-price[i-1];
          SumP+=(diff>0?1:0);
         }
       
-       ExtRSIBuffer[ExtPeriodRSI]= SumP *100 / ExtPeriodRSI;
+       ExtPSYBuffer[ExtPeriodPSY]= SumP *100 / ExtPeriodPSY;
 
       //--- prepare the position value for main calculation
-      pos=ExtPeriodRSI+1;
+      pos=ExtPeriodPSY+1;
      }
      
      
@@ -82,17 +82,17 @@ int OnCalculate(const int rates_total,
    for(i=pos;i<rates_total && !IsStopped();i++)
      {
      
-      SumP = ExtRSIBuffer[i -1] * ExtPeriodRSI / 100;
+      SumP = ExtPSYBuffer[i -1] * ExtPeriodPSY / 100;
       
       // calculate curent position. 
       diff=price[i]-price[i-1];
       SumP+=(diff>0?1:0);
       
       // remove last start position.
-      diff=price[i - ExtPeriodRSI]-price[i- ExtPeriodRSI -1];
+      diff=price[i - ExtPeriodPSY]-price[i- ExtPeriodPSY -1];
       SumP-= (diff>0?1:0);
       
-      ExtRSIBuffer[i]= SumP *100 / ExtPeriodRSI;
+      ExtPSYBuffer[i]= SumP *100 / ExtPeriodPSY;
 
      }
 //--- OnCalculate done. Return new prev_calculated.
