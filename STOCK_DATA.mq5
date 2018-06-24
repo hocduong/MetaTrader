@@ -49,7 +49,7 @@ string GetData(string symbol)
         } 
       else 
         {        
-         PrintFormat("Error in WebRequest. Error code  =",GetLastError()); 
+         PrintFormat("Error in WebRequest. Error code  =%d",GetLastError()); 
          MessageBox("Add the address '"+resquest_api+"' in the list of allowed URLs on tab 'Expert Advisors'","Error",MB_ICONINFORMATION);      
         }
         
@@ -75,6 +75,8 @@ int updateData(string data, string symbol)
       string history_list[]; 
       
      int replaced = StringSplit(data,StringGetCharacter(json_separator_code,0) ,history_list); 
+     
+     PrintFormat("number date of data collected =%d.",replaced);
       
      if(replaced>0) 
      {
@@ -89,6 +91,7 @@ int updateData(string data, string symbol)
 
         updated = CustomRatesReplace(symbol,mql_history_list[0].time, mql_history_list[replaced -1].time,mql_history_list );
         
+        PrintFormat("Number of updated bars =%d. Latest date =%s ",updated, TimeToString(mql_history_list[replaced -1].time) );
      }
       
       return updated;
