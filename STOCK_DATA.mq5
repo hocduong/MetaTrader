@@ -42,15 +42,15 @@ string GetData(string symbol)
       resquest=WebRequest("GET",resquest_api,request_headers,timeout,data,result,result_headers); 
       
    //--- Checking errors 
-      if(resquest==-1) 
-        { 
-         PrintFormat("Error in WebRequest. Error code  =",GetLastError()); 
-         MessageBox("Add the address '"+resquest_api+"' in the list of allowed URLs on tab 'Expert Advisors'","Error",MB_ICONINFORMATION); 
-        } 
-      else 
+      if(resquest == 200) 
         { 
          //--- Load successfully 
-         PrintFormat("The resquest api has been successfully loaded, size =%d bytes.",ArraySize(result));         
+        PrintFormat("The resquest api has been successfully loaded, size =%d bytes.",ArraySize(result));                    
+        } 
+      else 
+        {        
+         PrintFormat("Error in WebRequest. Error code  =",GetLastError()); 
+         MessageBox("Add the address '"+resquest_api+"' in the list of allowed URLs on tab 'Expert Advisors'","Error",MB_ICONINFORMATION);      
         }
         
         return CharArrayToString(result);
