@@ -13,30 +13,32 @@
 #property indicator_type1   DRAW_LINE
 #property indicator_color1  DodgerBlue
 //--- input parameters
-input int InpPeriodRSI=12; // Period
+input int InpPeriodASY=5; // Period
 //--- indicator buffers
-double    ExtRSIBuffer[];
+double    ExtASYBuffer[];
 
 //--- global variable
-int       ExtPeriodRSI;
+int       ExtPeriodASY;
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
 void OnInit()
   {
+  
 //--- check for input
 
-   if(InpPeriodRSI<1)
+   if(InpPeriodASY<1)
      {
-      ExtPeriodRSI=12;
-      Print("Incorrect value for input variable InpPeriodRSI =",InpPeriodRSI,
-            "Indicator will use value =",ExtPeriodRSI,"for calculations.");
+      ExtPeriodASY=5;
+      Print("Incorrect value for input variable InpPeriodASY =",InpPeriodASY,
+            "Indicator will use value =",ExtPeriodASY,"for calculations.");
      }
-   else ExtPeriodRSI=InpPeriodRSI;
+   else ExtPeriodASY=InpPeriodASY;
+   
 //--- indicator buffers mapping
-   SetIndexBuffer(0,ExtRSIBuffer,INDICATOR_DATA);
+   SetIndexBuffer(0,ExtASYBuffer,INDICATOR_DATA);
 //--- name for DataWindow and indicator subwindow label
-   IndicatorSetString(INDICATOR_SHORTNAME,"ASY("+string(ExtPeriodRSI)+")");
+   IndicatorSetString(INDICATOR_SHORTNAME,"ASY("+string(ExtPeriodASY)+")");
 //--- initialization done
   }
 //+------------------------------------------------------------------+
@@ -50,40 +52,47 @@ int OnCalculate(const int rates_total,
    int    i;
    double diff;
    double SumP=0.0;
+   
 //--- check for rates count
-   if(rates_total<=ExtPeriodRSI)
+   if(rates_total<=ExtPeriodASY)
       return(0);
+      
 //--- preliminary calculations
+//--- bars handled on a previous calculate
    int pos=prev_calculated-1;
-   if(pos<=ExtPeriodRSI)
+   if(pos<=ExtPeriodASY)
      {
       //--- first RSIPeriod values of the indicator are not calculated
-      ExtRSIBuffer[0]=0.0;
+      ExtASYBuffer[0]=0.0;
       
-      for(i=1;i<=ExtPeriodRSI;i++)
+      for(i=1;i<=ExtPeriodASY;i++)
         {
-         ExtRSIBuffer[i]=0.0;
+         ExtASYBuffer[i]=0.0;
          diff=log(price[i])- log(price[i-1]);
          SumP+= diff *100;
         }
       
-       ExtRSIBuffer[ExtPeriodRSI]= SumP / ExtPeriodRSI;
+       ExtASYBuffer[ExtPeriodASY]= SumP / ExtPeriodASY;
 
       //--- prepare the position value for main calculation
-      pos=ExtPeriodRSI+1;
+      pos=ExtPeriodASY+1;
      }
+     
 //--- the main loop of calculations
    for(i=pos;i<rates_total && !IsStopped();i++)
      {
      
-      SumP = ExtRSIBuffer[i -1] * ExtPeriodRSI;
+      SumP = ExtASYBuffer[i -1] * ExtPeriodASY;
       
+      // calculate current position. 
       diff= log(price[i])- log(price[i-1]);
       SumP+= diff*100;
       
-      diff= log(price[i - ExtPeriodRSI]) - log(price[i- ExtPeriodRSI -1]);
+      // remove last start position.
+      diff= log(price[i - ExtPeriodASY]) - log(price[i- ExtPeriodASY -1]);
       SumP-= diff*100;
-      ExtRSIBuffer[i]= SumP / ExtPeriodRSI;
+      
+      ExtASYBuffer[i]= SumP / ExtPeriodASY;
 
      }
 //--- OnCalculate done. Return new prev_calculated.
