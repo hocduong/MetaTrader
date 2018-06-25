@@ -8,6 +8,8 @@
 #property version   "1.00"
 //--- indicator settings
 #property indicator_separate_window
+#property indicator_level1 0
+#property indicator_level2 100
 #property indicator_buffers 1
 #property indicator_plots   1
 #property indicator_type1   DRAW_LINE
@@ -19,6 +21,8 @@ double    ExtPSYBuffer[];
 
 //--- global variable
 int       ExtPeriodPSY;
+
+
 //+------------------------------------------------------------------+
 //| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
@@ -40,6 +44,8 @@ void OnInit()
    IndicatorSetString(INDICATOR_SHORTNAME,"PSY("+string(ExtPeriodPSY)+")");
 //--- initialization done
   }
+  
+  
 //+------------------------------------------------------------------+
 //| Relative Strength Index                                          |
 //+------------------------------------------------------------------+
@@ -95,6 +101,7 @@ int OnCalculate(const int rates_total,
       ExtPSYBuffer[i]= SumP *100 / ExtPeriodPSY;
 
      }
+     
 //--- OnCalculate done. Return new prev_calculated.
    return(rates_total);
   }
